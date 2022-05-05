@@ -6,7 +6,7 @@ node {
       }     
       stage('Build image') {         
        
-            app = docker.build("docker_hub/aman_21")    
+            app = docker.build("av21aman/aman_21")    
        }     
       stage('Test image') {           
             app.inside {            
@@ -15,7 +15,7 @@ node {
             }    
         }     
        stage('Push image') {
-                                                  docker.withRegistry('https://registry.hub.docker.com', 'git') {            
+                            docker.withRegistry('https://registry.hub.docker.com', 'git') {            
        app.push("${env.BUILD_NUMBER}")            
        app.push("latest")        
               }    
