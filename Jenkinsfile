@@ -1,31 +1,30 @@
-   
-node {
-    def app
-
-    stage('Clone repository') {
-      
-
-        checkout scm
-    }
-
-    stage('Build image') {
-  
-       app = docker.build("docker_hub/aman_21")
-    }
-
-    stage('Test image') {
-  
-
-        app.inside {
-            sh 'echo "Tests passed"'
-        }
-    }
-
-    stage('Push image') {
-        
-        docker.withRegistry('https://registry.hub.docker.com', 'git') {
-            app.push("${env.BUILD_NUMBER}")
-            app.push("latest")
-        }
-    }
+  pipeline {
+environment {
+registry = "av21aman/aman_21"
+registryCredential = 'docker_hub'
+dockerImage = ''
 }
+agent any
+stages {
+stage('Cloning our Git')
+   {
+      checkout scm  
+   }
+  
+stage('Building our image') {
+steps{
+script {
+dockerImage = docker.build(registry + ":$BUILD_NUMBER")
+}
+}
+}
+stage('Deploy our image') {
+steps{
+script {
+docker.withRegistry( '', registryCredential ) {
+dockerImage.push()
+}
+}
+}
+}
+
