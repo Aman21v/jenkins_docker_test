@@ -1,67 +1,21 @@
-pipeline { 
-
-    environment { 
-        registry = "av21aman/jenkinstest" 
-
+pipeline {
+    agent any
+    environment {
         registryCredential = 'dockerhub_id' 
-
-        dockerImage = '' 
     }
-
-
-    agent any 
-
-    stages { 
-
-        stage('Cloning our Git') { 
-
-            steps { 
-
-                git clone https://github.com/Aman21v/jenkins_docker_test.git
-
+    stages {
+        stage('SCM checkout') {
+            steps {
+                git 'https://github.com/Aman21v/jenkins_docker_test.git'
             }
-
-        } 
-
-        stage('Building our image') { 
-
-            steps { 
-
-                script { 
-
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
-
-                }
-
-            } 
-
         }
-
-        stage('Deploy our image') { 
-
-            steps { 
-
-                script { 
-
-                    docker.withRegistry( '', registryCredential ) { 
-
-                        dockerImage.push() 
-
-                    }
-
-                } 
-
-            }
         
-        push('pushing') { 
-            steps { 
-                docker push av21aman/jenkinstest:$BUILD_NUMBER
-            }
-            
-        stage('Cleaning up') { 
-            steps { 
-                sh "docker rmi $registry:$BUILD_NUMBER" 
+        stage('build docker image') {
+            steps {
+                sh 'docker build -t av21aman/jenkinstest:$BUILD_NUMBER .'
             }
         } 
-
+        
+      
     }
+}
