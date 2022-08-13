@@ -52,7 +52,12 @@ pipeline {
                 } 
 
             }
-
+        
+        push('pushing') { 
+            steps { 
+                docker push av21aman/jenkinstest:$BUILD_NUMBER
+            }
+            
         stage('Cleaning up') { 
             steps { 
                 sh "docker rmi $registry:$BUILD_NUMBER" 
